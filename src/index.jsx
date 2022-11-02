@@ -1,13 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useRef, useEffect } from "react";
 import ReactDOM from "react-dom/client";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import axios from "axios";
+import useObservableQuery from "./useObservableQuery";
 
 const queryClient = new QueryClient();
 
@@ -27,11 +24,13 @@ export default function App() {
 }
 
 function Example() {
-  const { isLoading, error, data, isFetching } = useQuery(["repoData"], () =>
+  const obs = useObservableQuery(["repoData"], () =>
     axios
       .get("https://api.github.com/repos/tannerlinsley/react-query")
       .then((res) => res.data)
   );
+
+  const { isLoading, error, data, isFetching } = obs.peek();
 
   if (isLoading) return "Loading...";
 
